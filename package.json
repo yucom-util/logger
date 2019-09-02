@@ -1,0 +1,42 @@
+{
+  "name": "@yucom/log",
+  "version": "0.1.4",
+  "description": "Preconfigured very simple logger",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "jest",
+    "tsc": "tsc",
+    "watch-ts": "tsc -w",
+    "build": "tsc && npm run tslint",
+    "prepublishOnly": "npm run-script build",
+    "start": "node dist/index.js",
+    "launch": "npm run build && npm start",
+    "tslint": "tslint -c tslint.json -p tsconfig.json 'src/**/*.ts'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yucom-util/node-logger.git"
+  },
+  "keywords": [
+    "logger"
+  ],
+  "author": "llobeto",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zorzal2/node-logger/issues"
+  },
+  "homepage": "https://github.com/zorzal2/node-logger#readme",
+  "dependencies": {
+    "@yucom/context": "^0.1.1",
+    "moment": "^2.24.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.18",
+    "@types/node": "^11.13.20",
+    "axios": "^0.19.0",
+    "eslint": "^6.3.0",
+    "express": "^4.17.1",
+    "jest": "^24.9.0"
+  }
+}
