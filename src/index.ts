@@ -15,7 +15,7 @@ type Logger = {
 }
 
 type MainLogger = Logger & {
-  create(label, levelName): Logger
+  create(label: string, levelName?: 'all' | 'debug' | 'info' | 'warning' | 'error' | 'none'): Logger
 }
 
 let instance: MainLogger = globalThis[symbol]
