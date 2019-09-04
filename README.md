@@ -4,13 +4,13 @@ Preconfigured simple logger
 ## Install
 
 ```
-npm install @yucom/logger
+npm install @yucom/log
 ```
 
 ## Use
 
 ```js
-import log from '@yucom/log';
+const log = require('@yucom/log');
 
 // log is a root logger
 log.debug('Hello world!'); // 2019-04-11T18:42:50.636-03:00 [][] DEBUG: Hello world!

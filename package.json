@@ -1,15 +1,14 @@
 {
   "name": "@yucom/log",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Preconfigured very simple logger",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yucom-util/node-logger.git"
+    "url": "git+https://github.com/yucom-util/log.git"
   },
   "keywords": [
     "logger"
@@ -17,9 +16,9 @@
   "author": "llobeto",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/zorzal2/node-logger/issues"
+    "url": "https://github.com/yucom-util/log/issues"
   },
-  "homepage": "https://github.com/zorzal2/node-logger#readme",
+  "homepage": "https://github.com/yucom-util/log#readme",
   "dependencies": {
     "@yucom/context": "^0.1.1",
     "moment": "^2.24.0"
