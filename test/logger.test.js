@@ -17,7 +17,7 @@ process.stderr.write = message => {
   return baseStdErrWrite(message);
 }
 
-const log = require('../src');
+const log = require('../');
 
 const defaultLogLevel = 'debug';
 
@@ -119,7 +119,7 @@ describe('Default log', () => {
   test('Instance is allways singleton', () => {
     log.setLevel('debug');
     jest.resetModules()
-    const log1 = require('../src')
+    const log1 = require('../')
     expect(log1).toBe(log)
   })
 });

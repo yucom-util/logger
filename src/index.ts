@@ -1,13 +1,27 @@
+import conf from './conf'
+import moment from 'moment'
+import context from '@yucom/context'
 
 const symbol = Symbol.for('io.yucom.log.instance')
 
-let instance = globalThis[symbol]
+type Logger = {
+  getLevel(): string
+  setLevel(levelName: string): Logger
+  getLabel(): string
+  debug(...messages): Logger
+  info(...messages): Logger
+  warning(...messages): Logger
+  error(...messages): Logger
+}
+
+type MainLogger = Logger & {
+  create(label, levelName): Logger
+}
+
+let instance: MainLogger = globalThis[symbol]
 
 if (!instance) {
 
-  const conf = require('./conf')
-  const moment = require('moment')
-  const context = require('@yucom/context')
 
   const asString = message => {
     if (typeof message !== 'object') return String(message)
@@ -16,14 +30,11 @@ if (!instance) {
   }
 
   class LogLevel {
-    constructor(number, name) {
-      this.number = number
-      this.name = name
-    }
+    constructor(public number: number, public name: string) { }
   }
 
   class Severity {
-    constructor(number, displayName, stream) {
+    constructor(public number: number, public displayName: string, public stream: NodeJS.WriteStream) {
       this.number = number
       this.displayName = displayName
       this. stream = stream
@@ -50,18 +61,17 @@ if (!instance) {
 
   let globalLogLevel = LogLevels[String(conf.level).toLowerCase()] || LogLevels.all
 
-  class Logger {
+  class BaseLogger {
 
-    constructor(label) {
-      this.label = label
-      this.level = undefined;
-    }
+    private level: LogLevel | undefined = undefined;
 
-    getLevel() {
+    constructor(private label: string) { }
+
+    getLevel(): string {
       return this.level ? this.level.name : globalLogLevel.name;
     }
 
-    setLevel(levelName) {
+    setLevel(levelName: string): Logger {
       this.level = LogLevels[String(levelName).toLocaleLowerCase()]
       if (!this.level) throw new Error('Invalid level name: ' + levelName)
       return this
@@ -72,20 +82,24 @@ if (!instance) {
     }
 
     debug(...messages) {
-      this.log(Severities.debug, messages)
+      return this.log(Severities.debug, messages)
     }
     info(...messages) {
-      this.log(Severities.info, messages)
+      return this.log(Severities.info, messages)
     }
     warning(...messages) {
-      this.log(Severities.warning, messages)
+      return this.log(Severities.warning, messages)
     }
     error(...messages) {
-      this.log(Severities.error, messages)
+      return this.log(Severities.error, messages)
     }
 
-    log(severity, messages) {
-      if (this.__currentLogLevel().number >= severity.number) {
+    protected currentLogLevel() {
+      return this.level || globalLogLevel
+    }
+
+    private log(severity, messages) {
+      if (this.currentLogLevel().number >= severity.number) {
         let time = moment().toISOString(true)
         let txid = context.get('txid') || ''
         let strings = messages.map(asString).join(' ')
@@ -93,38 +107,34 @@ if (!instance) {
       }
       return this
     }
-
-    __currentLogLevel() {
-      return this.level || globalLogLevel
-    }
   }
 
-  class MainLogger extends Logger {
+  class FullLogger extends BaseLogger {
     constructor() {
       super('')
     }
 
-    __currentLogLevel() {
+    protected currentLogLevel() {
       return globalLogLevel
     }
 
-    setLevel(levelName) {
+    setLevel(levelName: string) {
       globalLogLevel = LogLevels[levelName]
       return this
     }
 
-    getLevel() {
+    getLevel(): string {
       return globalLogLevel.name;
     }
 
-    create(label, levelName) {
-      const newLogger =  new Logger(label)
+    create(label, levelName): Logger {
+      const newLogger =  new BaseLogger(label)
       if (levelName) newLogger.setLevel(levelName)
       return newLogger
     }
   }
 
-  instance = new MainLogger()
+  instance = new FullLogger()
   globalThis[symbol] = instance
 
   instance.debug('Wellcome! New logger created.')
@@ -132,4 +142,4 @@ if (!instance) {
   instance.debug('Logger already exist.')
 }
 
-module.exports = instance
+export = instance;
